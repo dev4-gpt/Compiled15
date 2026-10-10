@@ -2,11 +2,13 @@
 
 YC RFS: **Self-Maintaining APIs**. Pitch: when a vendor ships a breaking API change, DriftFix finds the affected code in a customer repo and opens a pull request with a tested fix.
 
+Official RFS wording (Harsha Gaddipati): "When Stripe ships a breaking change or a new feature, an agent should scan customer codebases, identify affected usages, and open a PR with the fix." It can be per-provider agents ("Install Stripe's update agent") or a neutral service "like Dependabot but for APIs". Pitch stat from the RFS: at AWS, over 30% of service downtime came from external API/package changes going unnoticed.
+
 Build window 12:00-8:00 PM, **code freeze 6:45 PM**, submit by 7:45 PM. No code before noon. Declare anything pre-existing on the submission form.
 
 ## Tonight (no code)
 - Luminal account (psu.edu) and verify the API key. Create a GitHub org/test account and token. Get the MongoDB Atlas student credits and a free cluster. Optional: an AWS account.
-- Read the official RFS page for Self-Maintaining APIs and quote it on slide 1.
+- Put the RFS quote above on slide 1.
 - Agree on the 5 breaking changes and the repo layout on paper. Assign roles A-D.
 
 
@@ -96,7 +98,7 @@ Build window 12:00-8:00 PM, **code freeze 6:45 PM**, submit by 7:45 PM. No code 
 - 85-90s: who pays (API vendors cutting churn) and next step.
 
 **Judge Q&A prep.**
-- *How is this different from Dependabot/Renovate?* They bump versions; we rewrite your code to a changed contract and prove it with tests.
+- *How is this different from Dependabot/Renovate?* YC itself calls this "Dependabot but for APIs". Dependabot bumps versions; we rewrite your code to a changed API contract and prove it with tests.
 - *Versus Claude Code or Copilot?* Those are general agents run by a human. This triggers on the spec change, runs at fleet scale and verifies against the vendor's contract.
 - *Hallucinated fixes?* Nothing ships without passing tests. Anything unverified is flagged, never auto-merged.
 - *Who pays?* API vendors, per connected customer repo. Show event quotes.
