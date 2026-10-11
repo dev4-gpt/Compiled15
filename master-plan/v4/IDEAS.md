@@ -44,3 +44,6 @@ How to read the columns:
 **Fallback inside the same engine:** if dispatch scores don't improve by 3:30, swap the problem module to AlgoTune tasks and keep the agent loop.
 
 **Track 2 alternative if you'd rather sell:** LeadAgent.
+
+## Status
+**Chosen: DispatchIQ (Track 1).** Prototype: `prototype/dispatchiq/` (see its README and RUNBOOK). Fieldwork remains available in `prototype/fieldwork/`.
