@@ -1,0 +1,181 @@
+# Compiled15 scoring v2: evidence-grounded re-score for c0mpiled-15 (Oct 11 2026).
+#
+# Same top-level shape as master-plan/scoring/scores.yaml (criteria, gates, tracks,
+# candidates with id/name/track/pitch/scores/p_success/gates), so score.py can be
+# pointed at this file. Two changes are needed in score.py to reproduce the v2 numbers:
+#   1. risk_adjusted(w, p) must use the formula below: w * (floor + slope * p),
+#      with floor = 0.4 and slope = 0.6 (v1 used 0.5 + 0.5 * p).
+#   2. Legacy (v1 track-winner) candidates are kept for comparison. Several fail the
+#      new gates; score.py drops gate failures, so to see their numbers either
+#      comment out the gate check or read the report table.
+#
+# Scale: 1-10 per criterion. Anchors for 2 / 5 / 8 / 10 are listed per criterion.
+# p_success: probability that the LIVE PROOF lands by 7:00 PM judging
+#   (held-out improvement shown on fresh cases for Track 1 entries; at least one
+#   real paid sale for Track 2 entries; at least ~10 real external users or real
+#   PRs/citations for the rest). It is not "probability the code runs".
+# All scores are analyst judgments made from desk research on Oct 11 2026.
+# Event rules come from search-engine extracts of luma.com/compiled-jjvw and must be
+# verified at check-in; if a track does not exist as described, re-score E and S.
+
+version: 2
+formula:
+  weighted: "sum(weight * score) / sum(weights)   # 0-10"
+  final: "weighted * (floor + slope * p_success)"
+  floor: 0.4
+  slope: 0.6
+  rationale: >
+    In a sales-judged or held-out-judged track, a proof that does not land scores
+    near zero on E and V (38% of weight) and loses most of D, so the penalty for
+    failure is raised from 50% (v1) to 60%.
+
+event_tracks:
+  T1: {name: "Self-improving parallel agent team on Luminal (DeepSeek / GLM Flash)",
+       judged_on: "relative improvement over rounds and problem difficulty; evaluated on fresh held-out tests",
+       prizes: "$3,000 + Luminal founder session / $1,500 / $500", confidence: MEDIUM}
+  T2: {name: "Engineering Entrepreneurship",
+       judged_on: "actual sales made during the event",
+       prizes: "AWS pool up to $5,000 plus Engineering Entrepreneurship and Bloomerang pools", confidence: MEDIUM}
+  MONGO: {name: "Best use of MongoDB", prizes: "$1,000 credits, swag, article", confidence: MEDIUM}
+  LUMINAL: {name: "Luminal inference credits", prizes: "$1,000 credits", confidence: MEDIUM}
+
+criteria:
+  E: {name: Event-track scorability, weight: 20,
+      anchors: {2: "No confirmed track judges what this produces", 5: "Fits a track loosely; the track metric is not the demo's headline", 8: "Produces exactly the track metric (held-out delta or a sale)", 10: "Produces the track metric on a hard, real problem with a clean baseline"}}
+  V: {name: Verifiable real-world proof, weight: 18,
+      anchors: {2: "Self-authored fixtures or mocked data", 4: "Replay of real public data, no outside party involved", 6: "Real third-party artifacts (real repos, live sites, public filings) checkable by a judge", 8: "Real external users act during the event (10+), or real PRs on real repos", 10: "Paid sales or a merged upstream PR or strangers' usage logged live"}}
+  F: {name: Feasibility in ~7 build hours on the free stack, weight: 14,
+      anchors: {2: "Needs approvals, partners or paid APIs we lack", 5: "Core works, proof is rough", 8: "End to end with fallbacks by 5 PM", 10: "Comfortably done by 4 PM"}}
+  R: {name: RFS literal fit, weight: 10,
+      anchors: {2: "Tangential", 5: "Adjacent", 8: "Clearly answers it", 10: "Uses the RFS text's own nouns and verbs as the demo"}}
+  U: {name: Users reachable in the room, weight: 10,
+      anchors: {2: "Users are not present", 5: "A few attendees fit", 8: "Most attendees or judges can use it in 30 seconds", 10: "Everyone in the room is a user and can act live"}}
+  D: {name: Demo clarity and wow, weight: 8,
+      anchors: {2: "Needs explanation", 5: "Understandable dashboard", 8: "Before/after a judge sees in 30 seconds", 10: "Judge participates and sees the result change"}}
+  N: {name: Novelty vs named incumbents, weight: 6,
+      anchors: {2: "Shipped by a big incumbent", 5: "Partly covered by funded startups", 8: "Clear wedge incumbents ignore", 10: "New category"}}
+  L: {name: Free-stack leverage (what is cheap today), weight: 5,
+      anchors: {2: "Fights the free tiers", 5: "Uses free tiers", 8: "Built around a capability that just became cheap", 10: "The cheapness is the product insight"}}
+  S: {name: Prize stacking, weight: 5,
+      anchors: {2: "One prize at most", 5: "Track + one sponsor", 8: "Track + both sponsors", 10: "Two tracks + sponsors"}}
+  P: {name: Post-event startup potential, weight: 4,
+      anchors: {2: "Hobby", 5: "Small business", 8: "Venture-scale with known GTM", 10: "Team could raise on it"}}
+
+gates:
+  G1: "Proof uses real inputs the team did not author (real repos, live sites, public datasets, real users, real payments)"
+  G2: "No regulated claim and consent-safe (no unannounced recording of third parties, no legal/medical advice claim)"
+  G3: "Free stack and laptops only; no same-day third-party approval (e.g. WhatsApp Business verification)"
+  G4: "Lands in at least one confirmed event track or sponsor prize"
+
+tracks:
+  "1": Multiplayer AI
+  "2": AI-powered consumer products for 1B people
+  "3": AI for the aging population
+  "4": AI-native compliance infrastructure
+  "5": Self-maintaining APIs
+  "6": Proving you're human
+
+candidates:
+  # ---- Track 5: Self-maintaining APIs ----
+  - {id: migrateloop, name: MigrateLoop, track: "5", event_track: [T1, MONGO, LUMINAL], p_success: 0.70,
+     pitch: "Parallel Luminal agent team that learns to migrate real public code across real breaking API changes (e.g. openai-python v0->v1); fix rate rises over rounds and is measured on held-out real repos; ends in real PRs on forks",
+     proof: "Held-out pass rate (pyright + mocked-transport tests) round 0 vs round N; 2-3 PRs on forks of real repos; 1 upstream PR to an active repo if appropriate",
+     scores: {E: 10, V: 8, F: 7, R: 10, U: 5, D: 8, N: 7, L: 9, S: 9, P: 8}, gates: [G1, G2, G3, G4]}
+  - {id: fixmyrepo, name: FixMyRepo, track: "5", event_track: [T2, MONGO], p_success: 0.50,
+     pitch: "Pay $5, get a verified PR that moves your repo off deprecated SDK calls; sold to attendees in the room via Stripe link; Claude Code GitHub Action / MCP server under the hood",
+     proof: "Stripe payments plus PRs opened on buyers' real repos",
+     scores: {E: 8, V: 9, F: 7, R: 9, U: 6, D: 7, N: 5, L: 9, S: 6, P: 6}, gates: [G1, G2, G3, G4]}
+  - {id: breakwatch, name: Breakwatch, track: "5", event_track: [MONGO], p_success: 0.80,
+     pitch: "Provider-side GitHub Action: on each spec change, oasdiff breaking list + generated migration recipe + affected public dependents; demoed on real stripe/openapi or github/rest-api-description history",
+     proof: "Real breaking changes from public spec commits, hand-checkable",
+     scores: {E: 4, V: 7, F: 8, R: 9, U: 3, D: 7, N: 7, L: 7, S: 5, P: 8}, gates: [G1, G2, G3, G4]}
+
+  # ---- Track 1: Multiplayer AI ----
+  - {id: steerswarm, name: SteerSwarm, track: "1", event_track: [T1, MONGO, LUMINAL], p_success: 0.60,
+     pitch: "A self-improving agent team whose live run anyone can drop into via QR to watch, redirect and hand off; ablation measures whether human steering beats autonomous rounds on held-out tests",
+     proof: "Held-out improvement curve, autonomous vs human-steered arms; count of distinct live steerers",
+     scores: {E: 9, V: 7, F: 6, R: 9, U: 7, D: 9, N: 8, L: 8, S: 9, P: 6}, gates: [G1, G2, G3, G4]}
+  - {id: roomagent, name: RoomAgent, track: "1", event_track: [MONGO], p_success: 0.70,
+     pitch: "QR drops the judges into one live browser-agent session doing a real group task (e.g. the team's dinner order); live presence, vote/veto, take the wheel",
+     proof: "Distinct steerers, interventions, time to consensus, task actually done",
+     scores: {E: 3, V: 7, F: 7, R: 10, U: 9, D: 9, N: 6, L: 8, S: 5, P: 5}, gates: [G1, G2, G3, G4]}
+  - {id: quorumbot, name: QuorumBot, track: "1", event_track: [T2, MONGO], p_success: 0.60,
+     pitch: "Telegram agent added to hackathon team group chats: proposes actions, executes on quorum, keeps an attributed approval log; $3 team pass",
+     proof: "Groups added, actions approved, any paid passes",
+     scores: {E: 5, V: 7, F: 8, R: 7, U: 8, D: 7, N: 6, L: 8, S: 6, P: 6}, gates: [G1, G2, G3, G4]}
+
+  # ---- Track 2: Consumer for 1B ----
+  - {id: tenx, name: TenX, track: "2", event_track: [T1, MONGO, LUMINAL], p_success: 0.70,
+     pitch: "Agent team that evolves prompts and routing until a cheap Luminal-hosted model matches a frontier model on a consumer task (multilingual bill/receipt understanding) on held-out real documents; reports cost per user per month",
+     proof: "Held-out accuracy round 0 vs N on public document datasets; cost-per-user figure vs YC's $1,000/month",
+     scores: {E: 9, V: 7, F: 7, R: 8, U: 4, D: 7, N: 7, L: 10, S: 9, P: 7}, gates: [G1, G2, G3, G4]}
+  - {id: forwardcheck, name: ForwardCheck, track: "2", event_track: [MONGO], p_success: 0.85,
+     pitch: "Telegram bot: forward any suspicious message, screenshot or voice note and get a verdict in your language plus a share-to-family card",
+     proof: "Real messages from attendees' own phones; unique users and shares logged live",
+     scores: {E: 4, V: 8, F: 9, R: 7, U: 9, D: 8, N: 5, L: 9, S: 5, P: 6}, gates: [G1, G2, G3, G4]}
+  - {id: docsnap, name: DocSnap, track: "2", event_track: [T2, MONGO], p_success: 0.50,
+     pitch: "Telegram photo-of-a-document agent (lease, bill, letter) that explains it and drafts the next action; $3 per document sold to students in the room",
+     proof: "Paid uses and real documents processed",
+     scores: {E: 7, V: 8, F: 8, R: 6, U: 8, D: 7, N: 5, L: 8, S: 6, P: 6}, gates: [G1, G2, G3, G4]}
+
+  # ---- Track 3: Aging population ----
+  - {id: askbeforeyoupay, name: AskBeforeYouPay, track: "3", event_track: [T2, MONGO], p_success: 0.60,
+     pitch: "A parent forwards any suspicious text or call summary to a number or bot; it scores scam risk against FBI IC3 typologies and pings a chosen family member to approve; students pre-buy a $5 family setup for their parents or grandparents",
+     proof: "Paid family setups (Stripe) plus real scam texts forwarded by attendees, logged live",
+     scores: {E: 8, V: 9, F: 8, R: 9, U: 8, D: 9, N: 7, L: 8, S: 6, P: 8}, gates: [G1, G2, G3, G4]}
+  - {id: safeword, name: SafeWord, track: "3", event_track: [MONGO], p_success: 0.50,
+     pitch: "Voice-clone defense line: senior conferences a suspicious 'grandchild' call into an announced bot that calls the real relative and checks the family safe word",
+     proof: "Live call with a judge's phone",
+     scores: {E: 4, V: 6, F: 5, R: 8, U: 5, D: 9, N: 7, L: 7, S: 5, P: 7}, gates: [G1, G2, G3, G4]}
+  - {id: scamevolve, name: ScamEvolve, track: "3", event_track: [T1, MONGO, LUMINAL], p_success: 0.80,
+     pitch: "Agent team that evolves an elder-scam detector on public scam-message corpora; held-out improvement on unseen real scam texts",
+     proof: "Held-out precision/recall round 0 vs N",
+     scores: {E: 8, V: 6, F: 8, R: 7, U: 4, D: 6, N: 4, L: 8, S: 9, P: 5}, gates: [G1, G2, G3, G4]}
+
+  # ---- Track 4: Compliance infrastructure ----
+  - {id: complaintradar, name: ComplaintRadar, track: "4", event_track: [T1, MONGO, LUMINAL], p_success: 0.65,
+     pitch: "Agent team that learns to forecast and explain week-over-week CFPB complaint spikes per company/product from the free CFPB API; backtested on held-out future weeks; each flag ships with a reg-cited memo",
+     proof: "Held-out backtest metric round 0 vs N on real public complaints; eCFR-cited anomaly memos",
+     scores: {E: 9, V: 8, F: 7, R: 8, U: 3, D: 7, N: 7, L: 8, S: 9, P: 7}, gates: [G1, G2, G3, G4]}
+  - {id: claimcheck, name: ClaimCheck, track: "4", event_track: [T2, MONGO], p_success: 0.55,
+     pitch: "Crawl real fintech or startup landing pages, extract claims (FDIC insured, 0% APR, no fees), map each to an eCFR/FTC paragraph; sell a $10 landing-page check to founders in the room",
+     proof: "Hand-verifiable table for 10 real live sites with eCFR paragraph URLs; any paid checks",
+     scores: {E: 6, V: 8, F: 7, R: 8, U: 5, D: 8, N: 7, L: 7, S: 6, P: 7}, gates: [G1, G2, G3, G4]}
+  - {id: regdiffpr, name: RegDiff-PR, track: "4", event_track: [MONGO], p_success: 0.70,
+     pitch: "Federal Register + eCFR point-in-time diff turned into a PR redlining a fintech's disclosure templates; git history is the audit trail",
+     proof: "Real rule changes; target repo is self-built",
+     scores: {E: 4, V: 6, F: 7, R: 9, U: 3, D: 7, N: 6, L: 7, S: 5, P: 7}, gates: [G1, G2, G3, G4]}
+
+  # ---- Track 6: Proving you're human ----
+  - {id: onevote, name: OneVote, track: "6", event_track: [MONGO], p_success: 0.55,
+     pitch: "One-human-one-vote for the room: passkey (WebAuthn UV) + Turnstile gate on an audience vote; headless agents and duplicate voters are blocked and shown live",
+     proof: "Real attendees vote; blocked duplicate and agent attempts logged",
+     scores: {E: 4, V: 8, F: 8, R: 8, U: 10, D: 8, N: 5, L: 8, S: 5, P: 5}, gates: [G1, G2, G3, G4]}
+  - {id: agentpass, name: AgentPass, track: "6", event_track: [MONGO], p_success: 0.50,
+     pitch: "Human-bound agent pass: passkey ceremony issues a delegation token bound to an agent's Web Bot Auth key with per-human quotas; drop-in middleware",
+     proof: "Real headless agents vs deployed page; bound pass, unbound blocked",
+     scores: {E: 4, V: 7, F: 5, R: 9, U: 7, D: 8, N: 6, L: 7, S: 5, P: 8}, gates: [G1, G2, G3, G4]}
+  - {id: botledger, name: BotLedger, track: "6", event_track: [MONGO], p_success: 0.65,
+     pitch: "Agent-traffic auditor: classify real bot hits by UA, ASN, published crawler IP ranges and Web Bot Auth signatures; flag spoofed GPTBot/Googlebot",
+     proof: "Real logs from team members' existing sites",
+     scores: {E: 4, V: 6, F: 7, R: 6, U: 4, D: 6, N: 6, L: 7, S: 5, P: 6}, gates: [G1, G2, G3, G4]}
+
+  # ---- Legacy v1 track winners, re-scored under v2 for comparison ----
+  - {id: driftfix_v1, name: DriftFix (v1 plan), track: "5", legacy: true, v1_risk_adj: 7.94, event_track: [MONGO, LUMINAL], p_success: 0.80,
+     pitch: "Self-authored OpenAPI v1->v2 fixtures; single-pass fix pipeline; PR on own repo",
+     scores: {E: 5, V: 4, F: 8, R: 10, U: 4, D: 9, N: 7, L: 7, S: 8, P: 8}, gates: [G2, G3, G4]}
+  - {id: scamshield_v1, name: ScamShield (v1 plan), track: "3", legacy: true, v1_risk_adj: 7.15, event_track: [MONGO], p_success: 0.70,
+     pitch: "Live scam-call detection with whisper intervention; staged call",
+     scores: {E: 3, V: 4, F: 6, R: 8, U: 5, D: 9, N: 6, L: 7, S: 6, P: 8}, gates: [G3, G4]}
+  - {id: warroom_v1, name: WarRoom (v1 plan), track: "1", legacy: true, v1_risk_adj: 6.98, event_track: [MONGO], p_success: 0.70,
+     pitch: "Incident agent co-steered by on-call team; simulated incident",
+     scores: {E: 3, V: 4, F: 7, R: 9, U: 5, D: 8, N: 7, L: 7, S: 6, P: 7}, gates: [G2, G3, G4]}
+  - {id: regdiff_v1, name: RegDiff (v1 plan), track: "4", legacy: true, v1_risk_adj: 6.58, event_track: [MONGO], p_success: 0.70,
+     pitch: "New regulation to cited diff of self-written internal policies",
+     scores: {E: 3, V: 5, F: 7, R: 9, U: 2, D: 7, N: 6, L: 6, S: 5, P: 7}, gates: [G2, G3, G4]}
+  - {id: docsaathi_v1, name: DocSaathi (v1 plan), track: "2", legacy: true, v1_risk_adj: 6.39, event_track: [MONGO], p_success: 0.65,
+     pitch: "WhatsApp voice assistant for documents (needs Meta/Twilio onboarding)",
+     scores: {E: 3, V: 6, F: 6, R: 9, U: 6, D: 8, N: 6, L: 7, S: 5, P: 7}, gates: [G1, G2, G4]}
+  - {id: humanpass_v1, name: HumanPass (v1 plan), track: "6", legacy: true, v1_risk_adj: 6.04, event_track: [MONGO], p_success: 0.50,
+     pitch: "Unlinkable personhood tokens plus scoped agent delegation; simulated issuer",
+     scores: {E: 3, V: 4, F: 5, R: 10, U: 5, D: 7, N: 7, L: 6, S: 5, P: 8}, gates: [G2, G3, G4]}
