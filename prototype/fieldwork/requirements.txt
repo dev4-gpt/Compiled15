@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-multipart
+pandas
+jinja2
+httpx
+openai
+pymongo
+playwright
+pytest

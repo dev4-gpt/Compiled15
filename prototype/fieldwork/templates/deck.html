@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ pack.org_name }} · {{ title }}</title>
+<style>
+  :root { --ink:#14213d; --muted:#5c677d; --accent:#0f766e; --warn:#b45309; --line:#e2e8f0; --bg:#ffffff; --soft:#f1f5f9; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: Inter, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color:var(--ink); background:#e5e7eb; }
+  .slide { width:11in; min-height:8.5in; margin:24px auto; padding:0.6in 0.7in; background:var(--bg); box-shadow:0 2px 12px rgba(0,0,0,.08); page-break-after:always; position:relative; }
+  .slide:last-child { page-break-after:auto; }
+  .kicker { text-transform:uppercase; letter-spacing:.12em; font-size:11px; color:var(--accent); font-weight:700; }
+  h1 { font-size:34px; line-height:1.15; margin:.2em 0 .4em; }
+  h2 { font-size:24px; margin:.2em 0 .6em; }
+  p, li { font-size:15px; line-height:1.5; }
+  .muted { color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+  .tile { background:var(--soft); border-radius:10px; padding:16px; }
+  .tile .v { font-size:28px; font-weight:800; }
+  .tile .l { font-size:12px; color:var(--muted); margin-top:4px; }
+  .card { border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+  .card h3 { margin:0 0 6px; font-size:17px; }
+  .cite { font-size:11px; color:var(--muted); margin-top:6px; }
+  .cite code { background:var(--soft); padding:1px 5px; border-radius:4px; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:600; }
+  .footer { position:absolute; bottom:.35in; left:.7in; right:.7in; font-size:10px; color:var(--muted); display:flex; justify-content:space-between; }
+  .letter { white-space:pre-wrap; font-size:13px; }
+  .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; background:#ccfbf1; color:#115e59; font-weight:700; }
+  .badge.warn { background:#fef3c7; color:var(--warn); }
+  @media print { body { background:#fff; } .slide { margin:0; box-shadow:none; } }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="kicker">{{ title }} · {{ pack.org_name }}</div>
+  <h1>{{ report.headline or (pack.org_name ~ " " ~ title) }}</h1>
+  <p class="muted">{{ report.situation }}</p>
+  <p class="muted">Period: {{ pack.period }} · Data as of {{ pack.as_of }}</p>
+  <div class="grid" style="margin-top:28px">
+    {% for m in metrics[:6] %}
+    <div class="tile"><div class="v">{{ m.display() }}</div><div class="l">{{ m.label }}</div></div>
+    {% endfor %}
+  </div>
+  <div class="footer"><span>Every number in this report is computed from your data and listed with its formula in the appendix.</span>
+    <span>{% if meta.violations %}<span class="badge warn">{{ meta.violations|length }} unverified statements</span>{% else %}<span class="badge">All numbers verified</span>{% endif %}</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">What we found</div>
+  <h2>Findings</h2>
+  {% for f in report.findings %}
+  <div class="card"><h3>{{ f.title }}</h3><div>{{ f.body }}</div>
+    <div class="cite">Evidence: {% for mid in f.metric_ids %}<code>{{ mid }}</code> {% endfor %}</div></div>
+  {% endfor %}
+</section>
+
+<section class="slide">
+  <div class="kicker">What to do next</div>
+  <h2>Recommendations</h2>
+  {% for r in report.recommendations %}
+  <div class="card"><h3>{{ loop.index }}. {{ r.title }}</h3>
+    <div><strong>Action:</strong> {{ r.action }}</div>
+    <div><strong>Why:</strong> {{ r.rationale }}</div>
+    <div class="muted"><strong>Owner:</strong> {{ r.owner }} · <strong>When:</strong> {{ r.timeline }}</div>
+    <div class="cite">Evidence: {% for mid in r.metric_ids %}<code>{{ mid }}</code> {% endfor %}</div></div>
+  {% endfor %}
+</section>
+
+{% if pack.practice == "donor" %}
+<section class="slide">
+  <div class="kicker">Action list</div>
+  <h2>Win-back priority list (gave last year, not this year)</h2>
+  <table><tr><th>#</th><th>Donor</th><th>Email</th><th>Last-year giving</th><th>Lifetime</th><th>Gifts</th><th>Days since last gift</th></tr>
+  {% for r in pack.tables.lybunt_priority[:15] %}
+  <tr><td>{{ loop.index }}</td><td>{{ r.name }}</td><td>{{ r.email }}</td><td>${{ "{:,.0f}".format(r.last_year_total) }}</td><td>${{ "{:,.0f}".format(r.lifetime_total) }}</td><td>{{ r.gifts }}</td><td>{{ r.days_since_last_gift }}</td></tr>
+  {% endfor %}</table>
+  {% if pack.tables.upgrade_candidates %}
+  <h2 style="margin-top:22px">Upgrade candidates (giving more this year)</h2>
+  <table><tr><th>Donor</th><th>This year</th><th>Last year</th><th>Gifts</th></tr>
+  {% for r in pack.tables.upgrade_candidates[:6] %}
+  <tr><td>{{ r.name }}</td><td>${{ "{:,.0f}".format(r.this_year_total) }}</td><td>${{ "{:,.0f}".format(r.last_year_total) }}</td><td>{{ r.gifts }}</td></tr>
+  {% endfor %}</table>
+  {% endif %}
+</section>
+{% if report.letters %}
+<section class="slide">
+  <div class="kicker">Ready to send</div>
+  <h2>Drafted personal notes</h2>
+  <div class="grid">
+  {% for l in report.letters %}
+  <div class="card"><h3>{{ l.name }}</h3><div class="muted">Subject: {{ l.subject }}</div><p class="letter">{{ l.body }}</p></div>
+  {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% else %}
+<section class="slide">
+  <div class="kicker">Action list</div>
+  <h2>Top items and biggest declines</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <table><tr><th>Top item</th><th>Net sales</th><th>Share</th></tr>
+    {% for r in pack.tables.top_items %}<tr><td>{{ r.item }}</td><td>${{ "{:,.0f}".format(r.net_sales) }}</td><td>{{ r.share_pct }}%</td></tr>{% endfor %}</table>
+    <div>
+    <table><tr><th>Declining item</th><th>Now</th><th>Before</th></tr>
+    {% for r in pack.tables.declining_items %}<tr><td>{{ r.item }}</td><td>${{ "{:,.0f}".format(r.current) }}</td><td>${{ "{:,.0f}".format(r.prior) }}</td></tr>{% endfor %}</table>
+    {% if pack.tables.by_weekday %}
+    <table style="margin-top:18px"><tr><th>Day</th><th>Avg weekly sales</th></tr>
+    {% for r in pack.tables.by_weekday %}<tr><td>{{ r.day }}</td><td>${{ "{:,.0f}".format(r.avg_net_sales) }}</td></tr>{% endfor %}</table>
+    {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="slide">
+  <div class="kicker">Appendix · audit trail</div>
+  <h2>Every metric, its value and how it was computed</h2>
+  <table><tr><th>Id</th><th>Metric</th><th>Value</th><th>Formula</th><th>Source</th></tr>
+  {% for m in metrics %}<tr><td><code>{{ m.id }}</code></td><td>{{ m.label }}</td><td>{{ m.display() }}</td><td>{{ m.formula }}</td><td>{{ m.source }}</td></tr>{% endfor %}
+  </table>
+  {% if pack.constants %}<p class="muted">Method constants: {% for k, v in pack.constants.items() %}{{ k }} = {{ v }}{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+  {% if pack.notes %}<p class="muted">Data notes: {{ pack.notes|join(" ") }}</p>{% endif %}
+  <p class="muted">Written by: {{ meta.analyst }} analyst. Numbers come from deterministic code; the writer may only cite them.</p>
+</section>
+
+</body>
+</html>

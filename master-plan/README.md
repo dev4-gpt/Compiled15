@@ -2,7 +2,7 @@
 
 A structured plan for six Fall 2026 YC Requests for Startups. Each request gets 3 candidate concepts, a gated and weighted score, an end-to-end MVP plan, a resource map and a final decision. It extends the earlier Track 1B strategy doc and the DriftFix runbook at the repo root.
 
-> **Decision: build DriftFix.** Backup: ScamShield. Details in [`FINAL_DECISION.md`](FINAL_DECISION.md).
+> **Superseded.** The current decision is in [`v3/FINAL_DECISION.md`](v3/FINAL_DECISION.md): **Fieldwork in Track 2**, prototype in [`../prototype/fieldwork`](../prototype/fieldwork). Every idea and its score is listed in [`v3/IDEAS.md`](v3/IDEAS.md). This v1 plan is kept for history.
 
 ## 1. Structure
 
