@@ -1,0 +1,222 @@
+# Compiled15 v4 scoring. Run: python3 master-plan/scoring/score.py --config master-plan/v4/scoring/scores_v4.yaml
+# Changes from v3, at the user's request:
+# - adds W (AI-native wow: the agent acts live) and P (startup growth potential);
+# - U counts buyers reachable WITHOUT depending on local organizations attending;
+# - drops Q (consulting-grade) and T (fit with selling) as separate criteria.
+# The honesty rules are unchanged:
+# - a score of 8 or more needs an evidence entry, or the script caps it at 7;
+# - the qualification bar is weighted >= 8.0 and p_success >= 0.6.
+# Evidence: research_notes/v4 new ideas/*.md, research_notes/v3 judges sponsors demand/*.md
+# (all from search extracts; verify on site).
+
+formula: {a: 0.4, b: 0.6}
+evidence_rule: {min_score: 8, cap: 7}
+qualify: {weighted_min: 8.0, p_min: 0.6}
+
+criteria:
+  E: {name: Event track metric fit, weight: 16}
+  V: {name: Verifiable real-world proof, weight: 14}
+  F: {name: Feasibility in the remaining ~6 hours, weight: 14}
+  W: {name: AI-native wow (agent acts live), weight: 12}
+  M: {name: Public demand evidence, weight: 10}
+  P: {name: Startup growth potential after the event, weight: 10}
+  U: {name: Buyers or users reachable without local orgs, weight: 8}
+  S: {name: Sponsor and judge alignment, weight: 8}
+  N: {name: Novelty vs named incumbents, weight: 8}
+
+gates:
+  G1: Proof uses inputs the team did not author (real users, real payments, real public benchmarks or code)
+  G2: Consent-safe and no regulated claim
+  G3: Free stack on laptops, no same-day third-party approval
+  G4: Lands in a confirmed track or sponsor prize
+
+tracks:
+  T1: "Track 1: self-improving agents on Luminal (held-out improvement)"
+  T2: "Track 2: sales during the event"
+  SP: "Sponsor prizes only"
+
+candidates:
+  # ---------- User-proposed ideas ----------
+  - id: dispatchiq
+    name: DispatchIQ (as Track 1 agent evolution)
+    track: T1
+    pitch: "Luminal agents evolve field-service dispatch code; a deterministic rule checker scores every schedule; tested on unseen disrupted days (sick tech, 2 PM emergency)."
+    p_success: 0.65
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 8, W: 8, M: 7, P: 6, U: 3, S: 8, N: 5}
+    evidence:
+      E: "Track 1: baseline, rounds, fresh held-out tests, judged on relative improvement and difficulty (luma.com/compiled-jjvw)"
+      V: "Public benchmark instances (Solomon VRPTW) plus freshly generated held-out days; deterministic feasibility checker (Compiled15_1A_Project_Strategy.docx; research_notes/v4 new ideas/track1_problems.md)"
+      F: "Hour-by-hour plan already exists (ScheduleEvolve in Compiled15_1A_Project_Strategy.docx); CPU-only simulation"
+      W: "Live Gantt before/after re-plan plus a live round-by-round improvement curve (1A doc demo plan)"
+      S: "Track 1 requires Luminal; judge Joe Fioti's compiler is search-based optimization (track1_problems.md)"
+
+  - id: dispatchiq_t2
+    name: DispatchIQ (sold to HVAC shops)
+    track: T2
+    pitch: "Dispatch and re-plan app sold to field-service businesses."
+    p_success: 0.15
+    gates: [G2, G3, G4]
+    scores: {E: 6, V: 5, F: 8, W: 6, M: 7, P: 6, U: 2, S: 5, N: 4}
+    evidence:
+      F: "Same scheduling engine; simulated data only"
+
+  - id: patchpilot
+    name: PatchPilot (sample repo)
+    track: SP
+    pitch: "Detects a breaking API change, patches the controlled sample repo, runs tests."
+    p_success: 0.75
+    gates: [G2, G3, G4]
+    scores: {E: 5, V: 4, F: 8, W: 7, M: 8, P: 8, U: 3, S: 5, N: 5}
+    evidence:
+      F: "DriftFix runbook (BUILD_PLAN_DriftFix.md)"
+      M: "RFS author: over 30% of AWS service downtime came from unnoticed external API/package changes (YC RFS, via research notes)"
+      P: "YC RFS 'Self-Maintaining APIs' explicitly asks for this company"
+
+  - id: auditflow
+    name: AuditFlow
+    track: T2
+    pitch: "Upload transactions and policies; AI flags possible violations with evidence and an audit report."
+    p_success: 0.2
+    gates: [G2, G3, G4]
+    scores: {E: 5, V: 4, F: 7, W: 5, M: 7, P: 6, U: 3, S: 5, N: 4}
+
+  - id: agentroom
+    name: AgentRoom
+    track: SP
+    pitch: "Two developers share one AI session: one starts a task, the other reviews proposed actions."
+    p_success: 0.45
+    gates: [G1, G2, G3, G4]
+    scores: {E: 4, V: 5, F: 5, W: 7, M: 6, P: 5, U: 7, S: 5, N: 3}
+
+  # ---------- New ideas from v4 research ----------
+  - id: countersign
+    name: Countersign
+    track: T2
+    pitch: "An AGI Inc agent does a money errand for an elderly parent (cancel a charge, dispute a bill), then pauses so family co-sign on their phones (passkey) before the final click."
+    p_success: 0.4
+    gates: [G1, G2, G3, G4]
+    scores: {E: 7, V: 6, F: 6, W: 9, M: 8, P: 8, U: 7, S: 9, N: 8}
+    evidence:
+      W: "AGI SDK has a waiting-for-input status, live VNC view and persistent sessions (agi-inc/agi-node, sponsor_wow_yc_fit.md)"
+      M: "FBI IC3 2025: ~$7.7B lost by people 60+ (via AARP); 63M US family caregivers (AARP 2025)"
+      P: "Spans 3 YC Fall 2026 RFS (Aging, Proving You're Human, Multiplayer); no 2026 YC company found doing caregiver co-sign (sponsor_wow_yc_fit.md)"
+      S: "Built on AGI Inc's API (judge Vivek Patel, $500 best-use prize)"
+      N: "Auth0 async approval, World AgentKit and Visa/Mastercard agent programs lack family/caregiver co-approval (sponsor_wow_yc_fit.md)"
+
+  - id: leadagent
+    name: LeadAgent (founder lead and investor research)
+    track: T2
+    pitch: "Founder types an ICP or round; agent returns 50 researched leads or investors with sources and draft emails in minutes. $29 per run."
+    p_success: 0.55
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 8, W: 7, M: 8, P: 6, U: 9, S: 5, N: 4}
+    evidence:
+      E: "Track 2 'actual sales during the event'; every attendee founder or student builder is a potential buyer (paying_users_fast.md)"
+      V: "Real Stripe payments from attendees; real researched rows"
+      F: "Search + LLM extraction pipeline; no third-party approval"
+      M: "Clay reached $100M ARR; Fiverr lead lists cost $50-400 and take days; Fundraisly charges $1k/mo (paying_users_fast.md)"
+      U: "Hackathon attendees and online founder communities"
+
+  - id: applygate
+    name: ApplyGate (quality-gated internship agent)
+    track: T2
+    pitch: "Agent finds matching internships, rejects poor fits, tailors and submits 10 strong applications with a recruiter note. $9 for 10."
+    p_success: 0.45
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 6, W: 8, M: 9, P: 7, U: 9, S: 6, N: 5}
+    evidence:
+      E: "Track 2 sales; students are the buyers in the room"
+      V: "Real submitted applications and real payments"
+      W: "Agent browses job boards and fills real application forms live"
+      M: "Greenhouse: applicants per job rose from 28 (2021) to 95 (2025) to ~254 (2026); AIApply ~$15-25K MRR (paying_users_fast.md)"
+      U: "Every student attendee"
+
+  - id: kernelforge
+    name: KernelForge (CPU kernel speedups)
+    track: T1
+    pitch: "Luminal agents evolve faster CPU kernels for KernelBench-style op chains; scored on fresh random shapes."
+    p_success: 0.5
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 6, W: 7, M: 8, P: 8, U: 2, S: 9, N: 6}
+    evidence:
+      E: "Track 1 metric; kernel optimization is a hard, recognized problem (KernelBench: frontier models beat PyTorch in under 20% of cases)"
+      V: "KernelBench problem definitions, fresh random held-out shapes, out-of-process timing (track1_problems.md)"
+      M: "Inference market ~$106B (2025) to ~$255B (2030); AlphaEvolve's 23% faster kernel cut Gemini training time ~1% (track1_problems.md)"
+      P: "Codeflash and Weco are funded in code optimization; inference cost is a top spend"
+      S: "Directly in judge Joe Fioti's domain (Luminal compiler, kernel search)"
+
+  - id: algotune
+    name: AlgoTune Evolve
+    track: T1
+    pitch: "Agents speed up NumPy/SciPy tasks from the AlgoTune benchmark; held-out instances from its generators."
+    p_success: 0.7
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 8, W: 6, M: 7, P: 7, U: 2, S: 8, N: 5}
+    evidence:
+      E: "Track 1 metric; public baseline (agent avg 1.58x; DeepSeek R1 >= 1.1x on 77 tasks) (track1_problems.md)"
+      V: "Ready-made public benchmark with random instance generators"
+      F: "Harness exists; CPU only"
+      S: "Track 1 Luminal requirement; performance optimization fits the judge"
+
+  - id: integrationmedic
+    name: Integration Medic
+    track: SP
+    pitch: "Agent repairs a broken integration by using the vendor dashboard (e.g. Stripe test mode) and opens a PR."
+    p_success: 0.35
+    gates: [G1, G2, G3, G4]
+    scores: {E: 6, V: 6, F: 5, W: 8, M: 7, P: 7, U: 3, S: 8, N: 6}
+    evidence:
+      W: "Computer-use agent acts in a real vendor dashboard"
+      S: "AGI Inc computer-use API"
+
+  - id: settlementbot
+    name: SettlementBot
+    track: T2
+    pitch: "Agent checks which class-action settlements you qualify for and files claims. $3 per claim."
+    p_success: 0.45
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 7, F: 6, W: 7, M: 6, P: 5, U: 9, S: 5, N: 5}
+    evidence:
+      E: "Track 2 sales to students"
+      U: "Apple Siri settlement covers many iPhone owners (paying_users_fast.md)"
+
+  # ---------- Earlier picks, rescored on v4 ----------
+  - id: fieldwork
+    name: Fieldwork (built)
+    track: T2
+    pitch: "Consultant-grade diagnostic from donor or POS exports; prototype exists."
+    p_success: 0.5
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 8, F: 9, W: 4, M: 8, P: 6, U: 5, S: 8, N: 6}
+    evidence:
+      E: "Track 2 sales rule"
+      V: "Runs on the buyer's own export, numbers validated (prototype/fieldwork)"
+      F: "Built, 10 tests pass"
+      M: "FEP retention data; consultant pricing (v3 notes)"
+      S: "Bloomerang API client, MongoDB store"
+
+  - id: migrateloop
+    name: MigrateLoop
+    track: T1
+    pitch: "Agents learn to migrate real public code across a breaking API change; held-out pass rate."
+    p_success: 0.6
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 6, W: 7, M: 7, P: 8, U: 3, S: 8, N: 7}
+    evidence:
+      E: "Track 1 metric"
+      V: "Real public code, held-out split hashed before tuning"
+      P: "YC RFS Self-Maintaining APIs"
+      S: "Luminal required by Track 1"
+
+  - id: askbeforeyoupay
+    name: AskBeforeYouPay
+    track: T2
+    pitch: "Parent forwards a suspicious payment request; scam verdict; family approves or stops."
+    p_success: 0.5
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 8, F: 6, W: 5, M: 9, P: 6, U: 7, S: 5, N: 5}
+    evidence:
+      E: "Track 2 sales"
+      V: "Real payments and real forwarded scam texts"
+      M: "IC3 2025 elder losses ~$7.7B"

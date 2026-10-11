@@ -1,0 +1,4 @@
+sample_data/*.csv
+__pycache__/
+.pytest_cache/
+.env

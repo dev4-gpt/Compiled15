@@ -1,0 +1,182 @@
+# Compiled15 v3 scoring. Run: python3 master-plan/scoring/score.py --config master-plan/v3/scoring/scores_v3.yaml
+#
+# Honesty rules (enforced by score.py):
+# - Any criterion scored >= 8 must have an `evidence` entry (a URL, a file in this repo,
+#   or a reproducible check). Otherwise the script caps it at 7.
+# - An idea "qualifies" only with weighted >= 8.0 and p_success >= 0.6.
+# - p_success = probability the LIVE PROOF lands by 7:00 PM judging (a real sale for
+#   Track 2, a held-out delta for Track 1), not the probability that the code runs.
+# Research behind the evidence: research_notes/v3 judges sponsors demand/*.md
+# All web facts came from search extracts (pages could not be opened here); verify on site.
+
+formula: {a: 0.4, b: 0.6}
+evidence_rule: {min_score: 8, cap: 7}
+qualify: {weighted_min: 8.0, p_min: 0.6}
+
+criteria:
+  E: {name: Event track metric fit, weight: 18}
+  V: {name: Verifiable real-world proof, weight: 16}
+  F: {name: Feasibility in the remaining ~6 hours, weight: 14}
+  M: {name: Public demand evidence, weight: 12}
+  U: {name: Buyer or user reachable during the event, weight: 10}
+  S: {name: Sponsor gap closure using sponsor APIs, weight: 10}
+  Q: {name: Consulting-grade output quality, weight: 8}
+  T: {name: Fit with team strength in pitching and selling, weight: 6}
+  N: {name: Novelty vs named incumbents, weight: 6}
+
+gates:
+  G1: Proof uses inputs the team did not author (a buyer's own export, real public data, real payments)
+  G2: Consent-safe and no regulated claim (not medical, legal or financial advice)
+  G3: Free stack on laptops with no same-day third-party approval (no live-data API keys we cannot get)
+  G4: Lands in a confirmed track or sponsor prize
+
+tracks:
+  T2: "Track 2: sell during the event (AWS, Engineering Entrepreneurship, Bloomerang pools)"
+  T1: "Track 1: self-improving agent team on Luminal (held-out improvement)"
+  SP: "Sponsor prizes only (MongoDB, AGI, Luminal credits)"
+
+candidates:
+  - id: fieldwork
+    name: Fieldwork (donor + sales practices)
+    track: T2
+    pitch: "Upload a donor or POS export, get a consultant-grade diagnostic in about a minute: every number computed by code and traceable, priority lists, drafted outreach. Sold on site to local nonprofits and small businesses."
+    p_success: 0.6
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 8, F: 9, M: 8, U: 7, S: 8, Q: 8, T: 8, N: 6}
+    evidence:
+      E: "Track 2 judges 'actual sales during the event' (luma.com/compiled-jjvw, search extract); each sale is a paid diagnostic"
+      V: "Runs on the buyer's own export; every number traced to a metric with its formula (prototype/fieldwork/engine/validate.py, tests/test_engine.py)"
+      F: "Working prototype: 10 passing tests and an end-to-end upload-to-PDF run (prototype/fieldwork)"
+      M: "FEP 2025 retention 43.3%, Q1 2026 YTD ~18% (afpglobal.org/fep); SMB consultant ~$75/hr, avg one-time engagement ~$399 (thumbtack.com/p/small-business-consulting-fees); 290 small nonprofits in the State College metro (causeiq.com/directory/state-college-pa-metro)"
+      S: "Bloomerang REST v2 client (prototype/fieldwork/bloomerang.py), MongoDB Atlas store (store.py), OpenAI-compatible LLM slot for Luminal; deployable on AWS"
+      Q: "Deck with findings, three owned and dated recommendations, action lists and an audit-trail appendix (sample run screenshots)"
+      T: "User: team of 2-5 with pitching and selling as a core skill"
+
+  - id: donorpulse
+    name: DonorPulse (nonprofit-only)
+    track: T2
+    pitch: "Retention audit for small nonprofits from any donor CRM export or the Bloomerang API, with LYBUNT win-back lists and drafted letters."
+    p_success: 0.45
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 8, F: 9, M: 8, U: 5, S: 9, Q: 8, T: 8, N: 6}
+    evidence:
+      E: "Track 2 sales rule plus the Bloomerang prize pool up to $2k (luma.com/compiled-jjvw)"
+      V: "Runs on the nonprofit's own export (prototype/fieldwork)"
+      F: "Same working prototype as Fieldwork"
+      M: "FEP retention data (afpglobal.org/fep); Bloomerang's own pitch: +10% retention can double lifetime value (bloomerang.com/blog/donor-retention-math-made-simple)"
+      S: "Built directly on Bloomerang's API and export; complements Penny (bloomerang.com/news/bloomerang-penny-ai-fundraising-strategist-nonprofits); a free audit from non-Bloomerang CRMs acts as a Bloomerang acquisition funnel"
+      Q: "Same deliverable as Fieldwork, plus drafted letters"
+      T: "User statement"
+
+  - id: fieldwork_smb
+    name: Fieldwork Sales (SMB-only)
+    track: T2
+    pitch: "POS export (Square, Shopify, Toast) to a sales diagnostic: Pareto, slow days, decliners, basket size, with a 3-step plan."
+    p_success: 0.55
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 8, F: 9, M: 7, U: 6, S: 6, Q: 8, T: 8, N: 5}
+    evidence:
+      E: "Track 2 sales rule (luma.com/compiled-jjvw)"
+      V: "Runs on the business's own export"
+      F: "Same working prototype"
+      Q: "Same deliverable format"
+      T: "User statement"
+
+  - id: migrateloop
+    name: MigrateLoop
+    track: T1
+    pitch: "Parallel Luminal agents learn a playbook for migrating real public code across a breaking API change; held-out pass rate at round 0 vs round N."
+    p_success: 0.6
+    gates: [G1, G2, G3, G4]
+    scores: {E: 9, V: 8, F: 6, M: 7, U: 3, S: 8, Q: 5, T: 4, N: 7}
+    evidence:
+      E: "Track 1 judges relative improvement on fresh held-out tests, weighted by difficulty (luma.com/compiled-jjvw)"
+      V: "Real public repositories with a held-out split, hashed before tuning"
+      S: "Track 1 requires DeepSeek or GLM Flash on Luminal; MongoDB stores the playbook"
+
+  - id: askbeforeyoupay
+    name: AskBeforeYouPay
+    track: T2
+    pitch: "A parent forwards a suspicious payment request, gets a scam verdict, and a family member is asked to approve; students pre-buy a $5 family setup."
+    p_success: 0.5
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 8, F: 6, M: 9, U: 7, S: 5, Q: 4, T: 8, N: 5}
+    evidence:
+      E: "Track 2 sales rule"
+      V: "Real Stripe payments and real scam texts that attendees forward"
+      M: "FBI IC3 2025: about $7.7B lost by people 60+ (via AARP and HousingWire, prior report)"
+      T: "User statement"
+
+  - id: forwardcheck
+    name: ForwardCheck
+    track: SP
+    pitch: "Forward any suspicious text or screenshot on Telegram and get a verdict in your language."
+    p_success: 0.85
+    gates: [G1, G2, G3, G4]
+    scores: {E: 4, V: 8, F: 8, M: 8, U: 9, S: 4, Q: 3, T: 5, N: 4}
+    evidence:
+      V: "Attendees' own spam, logged live"
+      F: "Telegram bot plus a free LLM tier"
+      M: "IC3 elder-fraud losses (prior report)"
+      U: "Every attendee has spam on their phone"
+
+  - id: tenx
+    name: TenX
+    track: T1
+    pitch: "Agent team evolves prompts and routing until a cheap model matches a frontier reference on held-out real documents; reports cost per user."
+    p_success: 0.6
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 7, F: 6, M: 7, U: 3, S: 7, Q: 5, T: 4, N: 6}
+    evidence:
+      E: "Track 1 held-out improvement metric"
+
+  - id: complaintradar
+    name: ComplaintRadar
+    track: T1
+    pitch: "Agent team forecasts CFPB complaint spikes per company; backtested on held-out future weeks, with eCFR-cited memos."
+    p_success: 0.55
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 7, F: 6, M: 6, U: 3, S: 7, Q: 7, T: 4, N: 6}
+    evidence:
+      E: "Track 1 held-out improvement metric"
+
+  - id: steerswarm
+    name: SteerSwarm
+    track: T1
+    pitch: "QR-joinable live console where people steer a Track 1 agent loop; compares a human-steered arm with an autonomous arm."
+    p_success: 0.45
+    gates: [G1, G2, G3, G4]
+    scores: {E: 8, V: 7, F: 4, M: 6, U: 6, S: 7, Q: 4, T: 5, N: 7}
+    evidence:
+      E: "Track 1 metric plus the Multiplayer AI RFS"
+
+  - id: vetfollow
+    name: VetFollow
+    track: T2
+    pitch: "Outbound follow-up and refill agent for local vet clinics (the gap on VetRec's roadmap); appeals to VetRec and Moichor-linked judges."
+    p_success: 0.25
+    gates: [G2, G4]
+    scores: {E: 7, V: 6, F: 5, M: 8, U: 4, S: 6, Q: 5, T: 8, N: 5}
+    evidence:
+      M: "VetRec launched an AI receptionist on Jul 15 2026 with follow-ups 'coming next'; vet admin burden (puppilot.co blog; judges_sponsors.md)"
+      T: "User statement"
+
+  - id: giftsync
+    name: GiftSync
+    track: SP
+    pitch: "An AGI Inc browser agent reconciles gifts from PayPal, Venmo or event tools into Bloomerang."
+    p_success: 0.3
+    gates: [G2, G4]
+    scores: {E: 6, V: 5, F: 5, M: 6, U: 4, S: 9, Q: 4, T: 6, N: 6}
+    evidence:
+      S: "AGI REST API api.agi.tech/v1 (agiinc.mintlify.app) plus the Bloomerang API; both sponsors"
+
+  - id: diligencedesk
+    name: DiligenceDesk
+    track: T2
+    pitch: "An operations-level diligence pre-screen for small-business buyers, built from a seller's POS and P&L exports."
+    p_success: 0.25
+    gates: [G1, G2, G3, G4]
+    scores: {E: 6, V: 6, F: 7, M: 7, U: 3, S: 6, Q: 8, T: 7, N: 5}
+    evidence:
+      Q: "Same engine and audit trail as Fieldwork"
